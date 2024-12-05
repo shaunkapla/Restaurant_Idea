@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, SafeAreaView } from 'react-native';
 import Header from '../components/header';
 import MapComponent from '../components/map';
 import SearchDropdown from '../components/searchBar';
+import ProfileDrawer from '../components/profileDrawer'; // Import the ProfileDrawer component
+import MoreItems from '../components/moreItems';
 
 const HomePage = () => {
+  const [isDrawerVisible, setDrawerVisible] = useState(false); // State to toggle drawer visibility
+  const [isMoreVisible, setMoreVisible] = useState(false); // State to toggle drawer visibility
   const [location, setLocation] = useState({
-    // default location will be SF for the time being
-    latitude: 37.7749, 
-    longitude: -122.4194, 
+    // Default location: SF
+    latitude: 37.7749,
+    longitude: -122.4194,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
@@ -34,16 +38,24 @@ const HomePage = () => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Header />
-        <SearchDropdown 
-          options={cityOptions} 
-          onOptionSelected={handleCitySelected} 
-        />
+        <Header onProfilePress={() => setDrawerVisible(true)} onMorePress={() => setMoreVisible(true)} />
+        <SearchDropdown options={cityOptions} onOptionSelected={handleCitySelected} />
       </View>
 
       <View style={styles.mapContainer}>
         <MapComponent location={location} />
       </View>
+
+      {isDrawerVisible && (
+        <ProfileDrawer
+          onClose={() => setDrawerVisible(false)}
+        />
+      )}
+      {isMoreVisible && (
+        <MoreItems
+          onClose={() => setMoreVisible(false)}
+        />
+      )}
     </View>
   );
 };
