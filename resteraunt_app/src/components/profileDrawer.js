@@ -124,32 +124,32 @@ const styles = StyleSheet.create({
   },
   profileBody: {
     flex: 1,
-    justifyContent: 'center', // Collapse the items closer together
+    justifyContent: 'center',
     alignItems: 'center',
   },
   profileContent: {
     paddingBottom: 30,
     alignItems: 'center',
-    marginBottom: 5, // Adds space between profileContent views
+    marginBottom: 5,
   },
   numBox: {
-    backgroundColor: '#ADD8E6',  // Light blue background
-    borderRadius: 12,            // Slightly rounded corners for a soft feel
-    borderWidth: 2,              // Thin border
-    borderColor: '#87CEEB',      // Light blue border that matches the background
-    fontFamily: 'Roboto',         // Crisp, modern font
-    fontSize: 30,                // Large font size for prominence
-    fontWeight: 'bold',          // Bold to make it stand out
-    color: '#FFFFFF',            // White text for good contrast
-    textAlign: 'center',         // Center text horizontally
-    letterSpacing: 1,            // Slight spacing for a clean look
-    paddingVertical: 12,         // Padding for height
-    paddingHorizontal: 16,       // Padding for width
-    shadowColor: 'rgba(0, 0, 0, 0.1)',  // Light shadow for a soft 3D effect
-    shadowOffset: { width: 0, height: 4 }, // Subtle shadow effect
-    shadowRadius: 6,             // Soft shadow edges
-    shadowOpacity: 0.15,         // Subtle shadow opacity
-    elevation: 4,                // Small elevation for Android devices
+    backgroundColor: '#ADD8E6',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#87CEEB',
+    fontFamily: 'Roboto',
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    letterSpacing: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 6,
+    shadowOpacity: 0.15,
+    elevation: 4,
   },
 });
 
