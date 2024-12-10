@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
-const MapComponent = ({ location }) => {
+const MapComponent = ({ location, pins }) => {
   return (
     <View style={styles.container}>
       <MapView
@@ -10,7 +10,14 @@ const MapComponent = ({ location }) => {
         showsUserLocation={false}
         region={location}
       >
-        <Marker coordinate={{ latitude: location.latitude, longitude: location.longitude }} title="Location" />
+
+        {pins.map((pin, index) => (
+          <Marker
+            key={index}
+            coordinate={{ latitude: pin.latitude, longitude: pin.longitude }}
+            title={pin.title}
+          />
+        ))}
       </MapView>
     </View>
   );
@@ -19,8 +26,6 @@ const MapComponent = ({ location }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   map: {
     width: '100%',

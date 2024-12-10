@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Header from '../components/header';
 import MapComponent from '../components/map';
 import SearchDropdown from '../components/searchBar';
-import ProfileDrawer from '../components/profileDrawer'; // Import the ProfileDrawer component
+import ProfileDrawer from '../components/profileDrawer';
 import MoreItems from '../components/moreItems';
 
 const HomePage = () => {
-  const [isDrawerVisible, setDrawerVisible] = useState(false); // State to toggle drawer visibility
-  const [isMoreVisible, setMoreVisible] = useState(false); // State to toggle drawer visibility
+  const [isDrawerVisible, setDrawerVisible] = useState(false);
+  const [isMoreVisible, setMoreVisible] = useState(false);
   const [location, setLocation] = useState({
-    // Default location: SF
     latitude: 37.7749,
     longitude: -122.4194,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+  const [pins, setPins] = useState([]);
 
   const cityOptions = [
     { name: 'New York, NY', latitude: 40.7128, longitude: -74.0060 },
@@ -35,6 +35,10 @@ const HomePage = () => {
     });
   };
 
+  const handleAddPin = (newPin) => {
+    setPins((prevPins) => [...prevPins, newPin]);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -43,18 +47,15 @@ const HomePage = () => {
       </View>
 
       <View style={styles.mapContainer}>
-        <MapComponent location={location} />
+        <MapComponent location={location} pins={pins} />
       </View>
 
       {isDrawerVisible && (
-        <ProfileDrawer
-          onClose={() => setDrawerVisible(false)}
-        />
+        <ProfileDrawer onClose={() => setDrawerVisible(false)} />
       )}
+
       {isMoreVisible && (
-        <MoreItems
-          onClose={() => setMoreVisible(false)}
-        />
+        <MoreItems onClose={() => setMoreVisible(false)} onAddPin={handleAddPin}/>
       )}
     </View>
   );

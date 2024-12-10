@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, View, TouchableWithoutFeedback, Dimensions, SafeAreaView } from 'react-native';
-import AddJournalComponent from './pinDown';
+import { Animated, StyleSheet, View, TouchableWithoutFeedback, Dimensions, SafeAreaView } from 'react-native';
+import AddPin from '../components/pinDown';
+
 // Getting the screen dimensions that I need
 const { width, height } = Dimensions.get('window'); 
 
-const MoreItems = ({ onClose }) => {
+const MoreItems = ({ onClose, onAddPin }) => {
   const slideAnim = useRef(new Animated.Value(-width)).current;
 
   useEffect(() => {
@@ -39,7 +40,7 @@ const MoreItems = ({ onClose }) => {
 
       <Animated.View style={[styles.drawer, { transform: [{ translateX: slideAnim }] }]}>
         <View style={styles.contentContainer}>
-          <AddJournalComponent />
+          <AddPin onClose={onClose} onAddPin={onAddPin}/>
         </View>
       </Animated.View>
     </SafeAreaView>

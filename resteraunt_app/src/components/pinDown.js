@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, Modal, ScrollView, StyleSheet, Pressable, TextInput } from "react-native";
+import { View, Text, Modal, ScrollView, StyleSheet, Pressable, TextInput, Alert, FlatList } from "react-native";
 import { Button } from "react-native-paper";
 
-const AddJournalComponent = () => {
+const AddPin = ({ onClose, onAddPin }) => {
   const [visible, setVisible] = useState(false);
   const [journalData, setJournalData] = useState({
     placeName: '',
@@ -16,6 +16,8 @@ const AddJournalComponent = () => {
     notes: '',
     website: '',
   });
+  const [addressOptions, setAddressOptions] = useState([]);
+  const [addressSelectionVisible, setAddressSelectionVisible] = useState(false);
 
   const toggleModal = () => {
     setVisible(!visible);
@@ -28,21 +30,74 @@ const AddJournalComponent = () => {
     }));
   };
 
+  const handleAddressSelect = (selectedAddress) => {
+    setJournalData((prevData) => ({
+      ...prevData,
+      address: selectedAddress,
+    }));
+    setAddressSelectionVisible(false);
+    fetchLatLng(selectedAddress);
+  };
+
+  const fetchLatLng = async (address = journalData.address) => {
+    if (!address) {
+      Alert.alert("Error", "Please enter an address.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          address
+        )}`
+      );
+
+      const data = await response.json();
+      if (data.length === 1) {
+        const { lat, lon } = data[0];
+        setJournalData((prevData) => ({
+          ...prevData,
+          lat,
+          lng: lon,
+        }));
+        Alert.alert("Success", "Latitude and Longitude retrieved successfully.");
+      } else if (data.length > 1) {
+        setAddressOptions(data);
+        setAddressSelectionVisible(true);
+      } else {
+        Alert.alert("No Results", "No coordinates found for the entered address.");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to fetch coordinates. Please try again later.");
+      console.error(error);
+    }
+  };
+
   const handleSubmit = () => {
-    console.log("Journal Data:", journalData);  // You can replace this with your actual submission logic
-    setJournalData({
-      placeName: '',
-      address: '',
-      lat: '',
-      lng: '',
-      rating: '',
-      food: '',
-      drinks: '',
-      cuisine: '',
-      notes: '',
-      website: '',
-    });  // Reset journal data to initial empty values
-    toggleModal(); // Close the modal after submission
+    if (onAddPin && typeof onAddPin === 'function') {
+      const newPin = {
+        latitude: parseFloat(journalData.lat),
+        longitude: parseFloat(journalData.lng),
+        title: journalData.placeName,
+      };
+      console.log("Journal Data:", journalData);
+      onAddPin(newPin);
+      setJournalData({
+        placeName: '',
+        address: '',
+        lat: '',
+        lng: '',
+        rating: '',
+        food: '',
+        drinks: '',
+        cuisine: '',
+        notes: '',
+        website: '',
+      });
+      toggleModal();
+    } else {
+      console.error('onAddPin is not a function');
+    }
   };
 
   return (
@@ -71,44 +126,21 @@ const AddJournalComponent = () => {
                 style={styles.input}
                 value={journalData.address}
                 onChangeText={(text) => handleInputChange("address", text)}
+                onBlur={() => fetchLatLng()}
               />
 
               <Text style={styles.text}>Latitude</Text>
               <TextInput
                 style={styles.input}
                 value={journalData.lat}
-                keyboardType="numeric"
-                onChangeText={(text) => handleInputChange("lat", text)}
+                editable={false}
               />
 
               <Text style={styles.text}>Longitude</Text>
               <TextInput
                 style={styles.input}
                 value={journalData.lng}
-                keyboardType="numeric"
-                onChangeText={(text) => handleInputChange("lng", text)}
-              />
-
-              <Text style={styles.text}>Rating</Text>
-              <TextInput
-                style={styles.input}
-                value={journalData.rating}
-                keyboardType="numeric"
-                onChangeText={(text) => handleInputChange("rating", text)}
-              />
-
-              <Text style={styles.text}>Food</Text>
-              <TextInput
-                style={styles.input}
-                value={journalData.food}
-                onChangeText={(text) => handleInputChange("food", text)}
-              />
-
-              <Text style={styles.text}>Drinks</Text>
-              <TextInput
-                style={styles.input}
-                value={journalData.drinks}
-                onChangeText={(text) => handleInputChange("drinks", text)}
+                editable={false}
               />
 
               <Text style={styles.text}>Cuisine</Text>
@@ -118,11 +150,20 @@ const AddJournalComponent = () => {
                 onChangeText={(text) => handleInputChange("cuisine", text)}
               />
 
+              <Text style={styles.text}>Rating</Text>
+              <TextInput
+                style={styles.input}
+                value={journalData.rating}
+                onChangeText={(text) => handleInputChange("rating", text)}
+                keyboardType="numeric"
+              />
+
               <Text style={styles.text}>Notes</Text>
               <TextInput
                 style={styles.input}
                 value={journalData.notes}
                 onChangeText={(text) => handleInputChange("notes", text)}
+                multiline
               />
 
               <Text style={styles.text}>Website</Text>
@@ -130,15 +171,43 @@ const AddJournalComponent = () => {
                 style={styles.input}
                 value={journalData.website}
                 onChangeText={(text) => handleInputChange("website", text)}
+                keyboardType="url"
               />
 
               <Pressable style={styles.closeButton} onPress={handleSubmit}>
                 <Text style={styles.closeButtonText}>Submit</Text>
               </Pressable>
-
             </ScrollView>
             <Pressable style={styles.closeButton} onPress={toggleModal}>
               <Text style={styles.closeButtonText}>Close</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={addressSelectionVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setAddressSelectionVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.title}>Select Address</Text>
+            <FlatList
+              data={addressOptions}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <Pressable
+                  onPress={() => handleAddressSelect(item.display_name)}
+                  style={styles.addressOption}
+                >
+                  <Text>{item.display_name}</Text>
+                </Pressable>
+              )}
+            />
+            <Pressable style={styles.closeButton} onPress={() => setAddressSelectionVisible(false)}>
+              <Text style={styles.closeButtonText}>Cancel</Text>
             </Pressable>
           </View>
         </View>
@@ -196,6 +265,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     marginBottom: 3,
   },
+  addressOption: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
 });
 
-export default AddJournalComponent;
+export default AddPin;
