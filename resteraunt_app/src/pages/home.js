@@ -8,8 +8,8 @@ import { getLocationFromCity } from '../utils/locationUtils';
 import HeaderWithSearch from '../components/headerWithSearch';
 
 const HomePage = () => {
-  const [isDrawerVisible, setDrawerVisible] = useState(false);
-  const [isMoreVisible, setMoreVisible] = useState(false);
+  const [isProfileDrawerVisible, setProfileDrawerVisible] = useState(false);
+  const [isMoreDrawerVisible, setMoreDrawerVisible] = useState(false);
   const [location, setLocation] = useState({
     latitude: 37.7749,
     longitude: -122.4194,
@@ -31,8 +31,8 @@ const HomePage = () => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <HeaderWithSearch
-          onProfilePress={() => setDrawerVisible(true)}
-          onMorePress={() => setMoreVisible(true)}
+          onProfilePress={() => setProfileDrawerVisible(true)}
+          onMorePress={() => setMoreDrawerVisible(true)}
           searchOptions={cityOptions}
           onSearchOptionSelected={handleCitySelected}
         />
@@ -42,12 +42,12 @@ const HomePage = () => {
         <MapComponent location={location} pins={pins} />
       </View>
 
-      {isDrawerVisible && (
-        <ProfileDrawer onClose={() => setDrawerVisible(false)} />
+      {isProfileDrawerVisible && (
+        <ProfileDrawer onClose={() => setProfileDrawerVisible(false)} />
       )}
 
-      {isMoreVisible && (
-        <MoreItems onClose={() => setMoreVisible(false)} onAddPin={handleAddPin}/>
+      {isMoreDrawerVisible && (
+        <MoreItems onClose={() => setMoreDrawerVisible(false)} onAddPin={handleAddPin}/>
       )}
     </View>
   );
