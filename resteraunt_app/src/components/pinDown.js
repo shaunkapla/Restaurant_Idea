@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, Modal, ScrollView, StyleSheet, Pressable, TextInput, Alert, FlatList } from "react-native";
-import { Button } from "react-native-paper";
 
-const AddPin = ({ onClose, onAddPin }) => {
-  const [visible, setVisible] = useState(false);
+const AddPinModal = ({ onAddPin, setModalDisplay }) => {
   const [journalData, setJournalData] = useState({
     placeName: '',
     address: '',
@@ -18,10 +16,6 @@ const AddPin = ({ onClose, onAddPin }) => {
   });
   const [addressOptions, setAddressOptions] = useState([]);
   const [addressSelectionVisible, setAddressSelectionVisible] = useState(false);
-
-  const toggleModal = () => {
-    setVisible(!visible);
-  };
 
   const handleInputChange = (name, value) => {
     setJournalData((prevData) => ({
@@ -94,20 +88,20 @@ const AddPin = ({ onClose, onAddPin }) => {
         notes: '',
         website: '',
       });
-      toggleModal();
     } else {
       console.error('onAddPin is not a function');
     }
   };
 
+  const handleClose = () => {
+    setModalDisplay(false);
+  };
+
   return (
     <View>
-      <Button icon="book-plus" onPress={toggleModal} style={styles.journalEntryButton}>Add Entry</Button>
       <Modal
-        visible={visible}
         transparent={true}
         animationType="slide"
-        onRequestClose={toggleModal}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -178,7 +172,7 @@ const AddPin = ({ onClose, onAddPin }) => {
                 <Text style={styles.closeButtonText}>Submit</Text>
               </Pressable>
             </ScrollView>
-            <Pressable style={styles.closeButton} onPress={toggleModal}>
+            <Pressable style={styles.closeButton} onPress={handleClose}>
               <Text style={styles.closeButtonText}>Close</Text>
             </Pressable>
           </View>
@@ -259,12 +253,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
-  journalEntryButton: {
-    borderColor: 'light blue', 
-    borderRadius: 15, 
-    borderWidth: 2,
-    marginBottom: 3,
-  },
   addressOption: {
     padding: 10,
     borderBottomWidth: 1,
@@ -272,4 +260,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddPin;
+export default AddPinModal;

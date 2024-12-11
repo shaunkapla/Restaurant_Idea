@@ -6,6 +6,7 @@ import MoreItems from '../components/moreItemsDrawer';
 import cityOptions from '../data/cities';
 import { getLocationFromCity } from '../utils/locationUtils';
 import HeaderWithSearch from '../components/headerWithSearch';
+import handlePins from '../hooks/handlePins';
 
 const HomePage = () => {
   const [isProfileDrawerVisible, setProfileDrawerVisible] = useState(false);
@@ -16,16 +17,13 @@ const HomePage = () => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  const [pins, setPins] = useState([]);
+  
+  const { pins, addPin } = handlePins();
 
   const handleCitySelected = (city) => {
     console.log("Selected Location", city.name)
     setLocation(getLocationFromCity(city))
   }
-
-  const handleAddPin = (newPin) => {
-    setPins((prevPins) => [...prevPins, newPin]);
-  };
 
   return (
     <View style={styles.container}>
@@ -47,7 +45,7 @@ const HomePage = () => {
       )}
 
       {isMoreDrawerVisible && (
-        <MoreItems onClose={() => setMoreDrawerVisible(false)} onAddPin={handleAddPin}/>
+        <MoreItems onClose={() => setMoreDrawerVisible(false)} onAddPin={addPin}/>
       )}
     </View>
   );
