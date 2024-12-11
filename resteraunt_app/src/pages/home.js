@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import Header from '../components/header';
 import MapComponent from '../components/map';
-import SearchDropdown from '../components/searchBar';
 import ProfileDrawer from '../components/profileDrawer';
 import MoreItems from '../components/moreItemsDrawer';
 import cityOptions from '../data/cities';
 import { getLocationFromCity } from '../utils/locationUtils';
+import HeaderWithSearch from '../components/headerWithSearch';
 
 const HomePage = () => {
   const [isDrawerVisible, setDrawerVisible] = useState(false);
@@ -31,8 +30,12 @@ const HomePage = () => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Header onProfilePress={() => setDrawerVisible(true)} onMorePress={() => setMoreVisible(true)} />
-        <SearchDropdown options={cityOptions} onOptionSelected={handleCitySelected} />
+        <HeaderWithSearch
+          onProfilePress={() => setDrawerVisible(true)}
+          onMorePress={() => setMoreVisible(true)}
+          searchOptions={cityOptions}
+          onSearchOptionSelected={handleCitySelected}
+        />
       </View>
 
       <View style={styles.mapContainer}>
