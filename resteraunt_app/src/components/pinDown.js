@@ -191,7 +191,7 @@ const AddPinModal = ({ onAddPin, setModalDisplay }) => {
             <Text style={styles.title}>Select Address</Text>
             <FlatList
               data={addressOptions}
-              keyExtractor={(item, index) => index.toString()}
+              keyExtractor={(index) => index.toString()}
               renderItem={({ item }) => (
                 <Pressable
                   onPress={() => handleAddressSelect(item.display_name)}
