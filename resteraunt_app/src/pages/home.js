@@ -4,7 +4,9 @@ import Header from '../components/header';
 import MapComponent from '../components/map';
 import SearchDropdown from '../components/searchBar';
 import ProfileDrawer from '../components/profileDrawer';
-import MoreItems from '../components/moreItems';
+import MoreItems from '../components/moreItemsDrawer';
+import cityOptions from '../data/cities';
+import { getLocationFromCity } from '../utils/locationUtils';
 
 const HomePage = () => {
   const [isDrawerVisible, setDrawerVisible] = useState(false);
@@ -17,23 +19,10 @@ const HomePage = () => {
   });
   const [pins, setPins] = useState([]);
 
-  const cityOptions = [
-    { name: 'New York, NY', latitude: 40.7128, longitude: -74.0060 },
-    { name: 'Denver, CO', latitude: 39.7392, longitude: -104.9903 },
-    { name: 'San Francisco, CA', latitude: 37.7749, longitude: -122.4194 },
-    { name: 'Miami, FL', latitude: 25.7617, longitude: -80.1918 },
-    { name: 'Boston, MA', latitude: 42.3601, longitude: -71.0589 },
-  ];
-
   const handleCitySelected = (city) => {
-    console.log('Selected city:', city.name);
-    setLocation({
-      latitude: city.latitude,
-      longitude: city.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    });
-  };
+    console.log("Selected Location", city.name)
+    setLocation(getLocationFromCity(city))
+  }
 
   const handleAddPin = (newPin) => {
     setPins((prevPins) => [...prevPins, newPin]);
