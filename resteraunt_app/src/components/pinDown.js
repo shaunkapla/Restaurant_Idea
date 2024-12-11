@@ -25,47 +25,53 @@ const AddPinModal = ({ onAddPin, setModalDisplay }) => {
   };
 
   const handleAddressSelect = (selectedAddress) => {
-    setJournalData((prevData) => ({
-      ...prevData,
-      address: selectedAddress,
-    }));
-    setAddressSelectionVisible(false);
-    fetchLatLng(selectedAddress);
-  };
+    const selectedOption = addressOptions.find(
+      (option) => option.display_name === selectedAddress
+    );
+    if (selectedOption) {
+      const { lat, lon, display_name } = selectedOption;
+      setJournalData((prevData) => ({
+        ...prevData,
+        address: display_name,
+        lat,
+        lng: lon,
+      }));
+      setAddressSelectionVisible(false);
+    }
+  };  
 
   const fetchLatLng = async (address = journalData.address) => {
     if (!address) {
       Alert.alert("Error", "Please enter an address.");
       return;
     }
-
+  
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          address
-        )}`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${address}`
       );
-
+  
       const data = await response.json();
       if (data.length === 1) {
-        const { lat, lon } = data[0];
+        const { lat, lon, display_name } = data[0];
         setJournalData((prevData) => ({
           ...prevData,
+          address: display_name,
           lat,
           lng: lon,
         }));
         Alert.alert("Success", "Latitude and Longitude retrieved successfully.");
       } else if (data.length > 1) {
-        setAddressOptions(data);
-        setAddressSelectionVisible(true);
+          setAddressOptions(data);
+          setAddressSelectionVisible(true);
       } else {
-        Alert.alert("No Results", "No coordinates found for the entered address.");
+          Alert.alert("No Results", "No coordinates found for the entered address.");
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to fetch coordinates. Please try again later.");
-      console.error(error);
+        Alert.alert("Error", "Failed to fetch coordinates. Please try again later.");
+        console.error(error);
     }
-  };
+  };  
 
   const handleSubmit = () => {
     if (onAddPin && typeof onAddPin === 'function') {
@@ -73,6 +79,10 @@ const AddPinModal = ({ onAddPin, setModalDisplay }) => {
         latitude: parseFloat(journalData.lat),
         longitude: parseFloat(journalData.lng),
         title: journalData.placeName,
+        address: journalData.address,
+        cuisine: journalData.cuisine,
+        rating: journalData.rating,
+        notes: journalData.notes,
       };
       console.log("Journal Data:", journalData);
       onAddPin(newPin);
@@ -86,7 +96,6 @@ const AddPinModal = ({ onAddPin, setModalDisplay }) => {
         drinks: '',
         cuisine: '',
         notes: '',
-        website: '',
       });
     } else {
       console.error('onAddPin is not a function');
@@ -158,14 +167,6 @@ const AddPinModal = ({ onAddPin, setModalDisplay }) => {
                 value={journalData.notes}
                 onChangeText={(text) => handleInputChange("notes", text)}
                 multiline
-              />
-
-              <Text style={styles.text}>Website</Text>
-              <TextInput
-                style={styles.input}
-                value={journalData.website}
-                onChangeText={(text) => handleInputChange("website", text)}
-                keyboardType="url"
               />
 
               <Pressable style={styles.closeButton} onPress={handleSubmit}>
