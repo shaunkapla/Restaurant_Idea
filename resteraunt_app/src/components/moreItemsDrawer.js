@@ -1,11 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, View, TouchableWithoutFeedback, Dimensions, SafeAreaView } from 'react-native';
-import AddPin from '../components/pinDown';
+import { Button } from 'react-native-paper';
+import AddPinModal from '../components/pinDown';
 
 // Getting the screen dimensions that I need
 const { width, height } = Dimensions.get('window'); 
 
 const MoreItems = ({ onClose, onAddPin }) => {
+  const [modalDisplayed, setModalDisplay] = useState(false);
   const slideAnim = useRef(new Animated.Value(-width)).current;
 
   useEffect(() => {
@@ -40,7 +42,16 @@ const MoreItems = ({ onClose, onAddPin }) => {
 
       <Animated.View style={[styles.drawer, { transform: [{ translateX: slideAnim }] }]}>
         <View style={styles.contentContainer}>
-          <AddPin onClose={onClose} onAddPin={onAddPin}/>
+          <Button icon="book-plus" onPress={() => setModalDisplay(true)} style={styles.journalEntryButton}>Add Entry</Button>
+          {modalDisplayed && (
+            <AddPinModal 
+              onAddPin={(newPin) => {
+                onAddPin(newPin);
+                setModalDisplay(false);
+              }} 
+              setModalDisplay={setModalDisplay}
+            />
+          )}
         </View>
       </Animated.View>
     </SafeAreaView>
@@ -88,6 +99,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  journalEntryButton: {
+    borderColor: 'light blue', 
+    borderRadius: 15, 
+    borderWidth: 2,
+    marginBottom: 3,
   },
 });
 
