@@ -41,7 +41,7 @@ const HeaderWithSearch = ({
 
 const styles = StyleSheet.create({
   container: {
-    zIndex: 1, // Ensures the header and dropdown are above other elements
+    zIndex: 1,
   },
   header: {
     backgroundColor: 'blue',
